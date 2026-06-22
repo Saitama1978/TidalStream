@@ -27,11 +27,7 @@ jobs:
 
       - name: Build APK File
         run: |
-          # Awtomatikong hahanapin kung nasaan ang pubspec.yaml at papasok doon
-          PROJECT_PATH=$(find . -name "pubspec.yaml" -exec dirname {} \;)
-          cd "$PROJECT_PATH"
-          
-          # Patatakbuhin ang pag-build ng APK
+          # Diretso nating patakbuhin ang build sa pinaka-ugat ng repository mo
           flutter pub get
           flutter build apk --release
 
@@ -39,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TidalStream-RenanteFullo-APK
-          path: "**/build/app/outputs/flutter-apk/app-release.apk"
+          path: build/app/outputs/flutter-apk/app-release.apk
