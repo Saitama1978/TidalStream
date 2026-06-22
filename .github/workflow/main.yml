@@ -25,36 +25,13 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build APK (Automatic Pathing)
+      - name: Build APK File
         run: |
-          # Hinahanap natin kung saang subfolder nakatago ang pubspec.yaml
+          # Awtomatikong hahanapin kung nasaan ang pubspec.yaml at papasok doon
           PROJECT_PATH=$(find . -name "pubspec.yaml" -exec dirname {} \;)
-          echo "Nahanap ang Flutter project sa folder: $PROJECT_PATH"
-          
-          # Pumasok sa folder ng project
           cd "$PROJECT_PATH"
           
-          # Gagawa ng mga mipmap folders sa loob ng tamang Android directory
-          mkdir -p android/app/src/main/res/mipmap-hdpi
-          mkdir -p android/app/src/main/res/mipmap-mdpi
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
-          
-          # Hahanapin ang icon mo kahit saan mo ito nailagay sa repo at ikokopya bilang app icon
-          ICON_PATH=$(find . -name "icon.png" | head -n 1)
-          if [ -f "$ICON_PATH" ]; then
-            echo "Nahanap ang icon.png sa: $ICON_PATH"
-            cp "$ICON_PATH" android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-            cp "$ICON_PATH" android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-            cp "$ICON_PATH" android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-            cp "$ICON_PATH" android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-            cp "$ICON_PATH" android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-          else
-            echo "⚠️ Warning: Hindi nahanap ang icon.png, gagamitin ang default icon ng Flutter."
-          fi
-          
-          # Dito na magpapatakbo ng build commands sa loob ng tamang folder
+          # Patatakbuhin ang pag-build ng APK
           flutter pub get
           flutter build apk --release
 
