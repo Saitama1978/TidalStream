@@ -39,7 +39,6 @@ class _TidalCalculatorScreenState extends State<TidalCalculatorScreen> {
 
   void _calculateStream() {
     double maxSpeed = double.tryParse(_maxSpeedController.text) ?? 0.0;
-    // Sinusoidal/Rule of Twelfths Curve calculation
     setState(() {
       _calculatedSpeed = maxSpeed * sin((_hoursAfterSlack / 6) * pi);
     });
@@ -49,9 +48,27 @@ class _TidalCalculatorScreenState extends State<TidalCalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('⚓ Passage Planning: Tidal Stream'),
+        title: const Text('⚓ Tidal Stream Calculator'),
         backgroundColor: Colors.blueGrey[900],
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () {
+              showAboutDialog(
+                context: context,
+                applicationName: 'TidalStream Calculator',
+                applicationVersion: '1.0.0',
+                applicationIcon: const Icon(Icons.anchor, color: Colors.tealAccent, size: 40),
+                children: [
+                  const Text('A maritime navigation tool for Passage Planning using Sinusoidal Curve calculation.'),
+                  const SizedBox(height: 15),
+                  const Text('🧑‍💻 Program by: Renante Fullo', style: TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              );
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -63,7 +80,6 @@ class _TidalCalculatorScreenState extends State<TidalCalculatorScreen> {
               color: Colors.blueGrey[800],
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                onChanged: (_) => _calculateStream(), // Real-time update
                 child: Column(
                   children: [
                     const Text(
@@ -97,7 +113,7 @@ class _TidalCalculatorScreenState extends State<TidalCalculatorScreen> {
               value: _hoursAfterSlack,
               min: 0.0,
               max: 6.0,
-              divisions: 12, // Bawat kalahating oras (0.5)
+              divisions: 12,
               label: '${_hoursAfterSlack.toStringAsFixed(1)} hrs',
               activeColor: Colors.tealAccent,
               onChanged: (value) {
@@ -130,6 +146,13 @@ class _TidalCalculatorScreenState extends State<TidalCalculatorScreen> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 20),
+            // Heto ang tatak mo sa main screen Chief!
+            const Text(
+              '⚓ Program by: Renante Fullo',
+              style: TextStyle(fontSize: 13, color: Colors.white38, fontStyle: FontStyle.italic),
+              textAlign: Center,
             ),
           ],
         ),
