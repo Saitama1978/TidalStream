@@ -25,9 +25,35 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build APK File
+      - name: Create Project and Compile APK
         run: |
-          # Diretso nating patakbuhin ang build sa pinaka-ugat ng repository mo
+          # 1. Bubuo kami ng bagong Flutter project sa loob ng automation
+          flutter create --org com.renantefullo --project-name tidal_stream_calculator my_app
+          
+          # 2. Kokopyahin ang main.dart mo mula sa iyong repo patungo sa bagong project
+          # Hinahanap kung nasaan ang main.dart mo para sigurado
+          MAIN_DART_SOURCE=$(find . -name "main.dart" | head -n 1)
+          cp "$MAIN_DART_SOURCE" my_app/lib/main.dart
+          
+          # 3. Pumasok sa ginawang app folder
+          cd my_app
+          
+          # 4. Mag-inject ng App Icon kung may nakitang icon.png sa repo mo
+          ICON_SOURCE=$(find .. -name "icon.png" | head -n 1)
+          if [ -f "$ICON_SOURCE" ]; then
+            mkdir -p android/app/src/main/res/mipmap-hdpi
+            mkdir -p android/app/src/main/res/mipmap-mdpi
+            mkdir -p android/app/src/main/res/mipmap-xhdpi
+            mkdir -p android/app/src/main/res/mipmap-xxhdpi
+            mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          fi
+          
+          # 5. Patakbuhin ang build commands
           flutter pub get
           flutter build apk --release
 
@@ -35,4 +61,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TidalStream-RenanteFullo-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: "**/build/app/outputs/flutter-apk/app-release.apk"
