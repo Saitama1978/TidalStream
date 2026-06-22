@@ -25,35 +25,21 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create Project and Compile APK
+      - name: Inject Custom App Icon
         run: |
-          # 1. Bubuo ng bagong malinis na Flutter project ang virtual machine
-          flutter create --org com.renantefullo --project-name tidal_stream_calculator my_app
-          
-          # 2. Hahanapin ang main.dart mo sa repo at ilalagay sa tamang folder
-          MAIN_DART_SOURCE=$(find . -name "main.dart" | grep -v "my_app" | head -n 1)
-          cp "$MAIN_DART_SOURCE" my_app/lib/main.dart
-          
-          # 3. Pumasok sa app directory
-          cd my_app
-          
-          # 4. Hahanapin ang icon mo sa repo para awtomatikong i-inject bilang App Icon
-          ICON_SOURCE=$(find .. -name "icon.png" | grep -v "my_app" | head -n 1)
-          if [ -f "$ICON_SOURCE" ]; then
-            mkdir -p android/app/src/main/res/mipmap-hdpi
-            mkdir -p android/app/src/main/res/mipmap-mdpi
-            mkdir -p android/app/src/main/res/mipmap-xhdpi
-            mkdir -p android/app/src/main/res/mipmap-xxhdpi
-            mkdir -p android/app/src/main/res/mipmap-xxxhdpi
-            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-            cp "$ICON_SOURCE" android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-            echo "🚀 App Icon successfully injected!"
-          fi
-          
-          # 5. Patakbuhin ang compilation ng APK
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp lib/icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+      - name: Build APK File
+        run: |
           flutter pub get
           flutter build apk --release
 
@@ -61,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TidalStream-RenanteFullo-APK
-          path: "**/build/app/outputs/flutter-apk/app-release.apk"
+          path: build/app/outputs/flutter-apk/app-release.apk
