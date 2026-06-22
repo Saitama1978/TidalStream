@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Nilalagay ito para pwede mong i-click at patakbuhin nang manual
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,6 +25,20 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Inject Custom App Icon
+        run: |
+          # Overwrite default Flutter icons automatically before compilation
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp lib/icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          cp lib/icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
       - name: Install Dependencies
         run: flutter pub get
 
@@ -34,5 +48,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TidalStream-Calculated-APK
+          name: TidalStream-RenanteFullo-APK
           path: build/app/outputs/flutter-apk/app-release.apk
