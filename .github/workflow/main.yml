@@ -1,0 +1,65 @@
+name: Flutter APK Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Inject Custom App Icon
+        run: |
+          # Hinahanap kung nasaan ang pubspec.yaml para doon ilagay ang icon
+          TARGET_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \;)
+          echo "Project root found at: $TARGET_DIR"
+          
+          mkdir -p "$TARGET_DIR/android/app/src/main/res/mipmap-hdpi"
+          mkdir -p "$TARGET_DIR/android/app/src/main/res/mipmap-mdpi"
+          mkdir -p "$TARGET_DIR/android/app/src/main/res/mipmap-xhdpi"
+          mkdir -p "$TARGET_DIR/android/app/src/main/res/mipmap-xxhdpi"
+          mkdir -p "$TARGET_DIR/android/app/src/main/res/mipmap-xxxhdpi"
+          
+          # Hinahanap kung nasaan ang icon.png mo sa repo para makopya nang tama
+          ICON_SOURCE=$(find . -name "icon.png" | head -n 1)
+          
+          cp "$ICON_SOURCE" "$TARGET_DIR/android/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+          cp "$ICON_SOURCE" "$TARGET_DIR/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
+          cp "$ICON_SOURCE" "$TARGET_DIR/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+          cp "$ICON_SOURCE" "$TARGET_DIR/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+          cp "$ICON_SOURCE" "$TARGET_DIR/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+
+      - name: Install Dependencies
+        run: |
+          TARGET_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \;)
+          cd "$TARGET_DIR"
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          TARGET_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \;)
+          cd "$TARGET_DIR"
+          flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TidalStream-RenanteFullo-APK
+          path: "**/build/app/outputs/flutter-apk/app-release.apk"
